@@ -17,10 +17,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="font-sans antialiased">
-        <Navigation />
-        <main className="min-h-screen bg-background">
-          {children}
-        </main>
+        <div className="flex min-h-screen">
+          <Navigation />
+          <main className="flex-1 bg-background overflow-auto">
+            {children}
+          </main>
+        </div>
         <Toaster />
       </body>
     </html>

@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
 
-const logoSrc = 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Logo-3wiKJEklf4OsaYyPsYX22HXVNLZ0TW.jpg'
+const logoSrc = '/images/PCG_MindRift_Co_Logo-09.png'
 
 export function LoginCard() {
   const router = useRouter()
