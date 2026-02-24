@@ -27,7 +27,7 @@ export async function PUT(
 
     // Check if supplier exists
     const { data: existing } = await supabase
-      .from('suppliers')
+      .from('custom_suppliers')
       .select('id, name')
       .eq('id', id)
       .single()
@@ -39,7 +39,7 @@ export async function PUT(
     // If name is being changed, check for duplicates
     if (name && name !== existing.name) {
       const { data: duplicate } = await supabase
-        .from('suppliers')
+        .from('custom_suppliers')
         .select('id')
         .eq('name', name.trim())
         .neq('id', id)
@@ -65,7 +65,7 @@ export async function PUT(
 
     // Update supplier
     const { data, error } = await supabase
-      .from('suppliers')
+      .from('custom_suppliers')
       .update(updateData)
       .eq('id', id)
       .select()
@@ -105,7 +105,7 @@ export async function DELETE(
 
     // Check if supplier is used in any applications
     const { data: applications } = await supabase
-      .from('rental_credit_applications')
+      .from('custom_rental_credit_applications')
       .select('id')
       .eq('supplier_id', id)
       .limit(1)
@@ -113,7 +113,7 @@ export async function DELETE(
     // If supplier is used, soft delete instead of hard delete
     if (applications && applications.length > 0) {
       const { data, error } = await supabase
-        .from('suppliers')
+        .from('custom_suppliers')
         .update({ is_active: false, updated_at: new Date().toISOString() })
         .eq('id', id)
         .select()
@@ -133,7 +133,7 @@ export async function DELETE(
 
     // Hard delete if not used
     const { error } = await supabase
-      .from('suppliers')
+      .from('custom_suppliers')
       .delete()
       .eq('id', id)
 

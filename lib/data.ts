@@ -4,7 +4,7 @@ export async function getSupportingDocumentsByApplication(id: string) {
   try {
     const supabase = createServerClient()
     const { data, error } = await supabase
-      .from('supporting_documents')
+      .from('custom_supporting_documents')
       .select('*')
       .eq('application_id', id)
       .order('uploaded_at', { ascending: false })
@@ -25,10 +25,10 @@ export async function getApplications() {
   try {
     const supabase = createServerClient()
     const { data, error } = await supabase
-      .from('rental_credit_applications')
+      .from('custom_rental_credit_applications')
       .select(`
         *,
-        supplier:suppliers(id, name, description)
+        supplier:custom_suppliers(id, name, description)
       `)
       .order('created_at', { ascending: false })
       .limit(20)
@@ -49,10 +49,10 @@ export async function getApplicationById(id: string) {
   try {
     const supabase = createServerClient()
     const { data, error } = await supabase
-      .from('rental_credit_applications')
+      .from('custom_rental_credit_applications')
       .select(`
         *,
-        supplier:suppliers(id, name, description, field_hints)
+        supplier:custom_suppliers(id, name, description, field_hints)
       `)
       .eq('id', id)
       .single()
@@ -79,7 +79,7 @@ export async function getSuppliers() {
   try {
     const supabase = createServerClient()
     const { data, error } = await supabase
-      .from('suppliers')
+      .from('custom_suppliers')
       .select('*')
       .eq('is_active', true)
       .order('name', { ascending: true })
@@ -100,7 +100,7 @@ export async function getSupplierById(id: string) {
   try {
     const supabase = createServerClient()
     const { data, error } = await supabase
-      .from('suppliers')
+      .from('custom_suppliers')
       .select('*')
       .eq('id', id)
       .single()
@@ -124,7 +124,7 @@ export async function getAllSuppliersWithInactive() {
   try {
     const supabase = createServerClient()
     const { data, error } = await supabase
-      .from('suppliers')
+      .from('custom_suppliers')
       .select('*')
       .order('name', { ascending: true })
 

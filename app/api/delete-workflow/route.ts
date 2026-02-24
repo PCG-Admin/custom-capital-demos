@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
 
     const supabase = createServerClient()
     const { error } = await supabase
-      .from('rental_credit_applications')
+      .from('custom_rental_credit_applications')
       .delete()
       .eq('id', id)
 

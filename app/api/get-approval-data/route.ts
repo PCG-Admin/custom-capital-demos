@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
 
     // Fetch the application to get approval_data
     const { data: application, error } = await supabase
-      .from('rental_credit_applications')
+      .from('custom_rental_credit_applications')
       .select('approval_data')
       .eq('id', applicationId)
       .single()

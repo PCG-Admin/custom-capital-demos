@@ -103,7 +103,7 @@ export async function POST(request: NextRequest) {
     // Update the database record if documentId is provided
     if (documentId) {
       const { error: updateError } = await supabase
-        .from('supporting_documents')
+        .from('custom_supporting_documents')
         .update({ document_url: publicUrl })
         .eq('id', documentId)
 

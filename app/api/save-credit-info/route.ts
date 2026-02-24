@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
     }
 
     const { error } = await supabase
-      .from('rental_credit_applications')
+      .from('custom_rental_credit_applications')
       .update(updateData)
       .eq('id', applicationId)
 

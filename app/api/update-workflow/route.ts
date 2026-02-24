@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
     const supabase = createServerClient()
 
     const { data: record, error: fetchError } = await supabase
-      .from('rental_credit_applications')
+      .from('custom_rental_credit_applications')
       .select('*')
       .eq('id', id)
       .single()
@@ -136,7 +136,7 @@ export async function POST(request: NextRequest) {
     }
 
     const { error } = await supabase
-      .from('rental_credit_applications')
+      .from('custom_rental_credit_applications')
       .update(updateData)
       .eq('id', id)
 
@@ -176,7 +176,7 @@ export async function POST(request: NextRequest) {
 
         // Store approval data in the database for future updates
         const { error: updateError } = await supabase
-          .from('rental_credit_applications')
+          .from('custom_rental_credit_applications')
           .update({ approval_data: approvalData })
           .eq('id', id)
 
@@ -208,7 +208,7 @@ export async function POST(request: NextRequest) {
 
         // Update approval data in the database
         await supabase
-          .from('rental_credit_applications')
+          .from('custom_rental_credit_applications')
           .update({ approval_data: approvalData })
           .eq('id', id)
       } catch (approvalError) {

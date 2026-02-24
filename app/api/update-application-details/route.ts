@@ -20,7 +20,7 @@ export async function POST(request: Request) {
 
         // Try updating rental_credit_applications
         const { data: appData, error: appError } = await supabase
-            .from('rental_credit_applications')
+            .from('custom_rental_credit_applications')
             .update({ document_name })
             .eq('id', id)
             .select()

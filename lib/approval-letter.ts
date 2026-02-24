@@ -113,7 +113,7 @@ export async function generateAndStoreApprovalLetter(application: ApplicationRec
         // Delete any existing approval letter for this application to avoid duplicates
         console.log('[approval-letter] Deleting existing approval letters...')
         const { error: deleteError } = await supabase
-            .from('supporting_documents')
+            .from('custom_supporting_documents')
             .delete()
             .eq('application_id', application.id)
             .eq('document_type', 'Approval Letter')
@@ -136,7 +136,7 @@ export async function generateAndStoreApprovalLetter(application: ApplicationRec
         console.log('[approval-letter] Insert data:', insertData)
 
         const { error: dbError } = await supabase
-            .from('supporting_documents')
+            .from('custom_supporting_documents')
             .insert(insertData)
 
         if (dbError) {

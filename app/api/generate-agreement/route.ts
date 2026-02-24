@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
 
     const supabase = createServerClient()
     const { data: application, error } = await supabase
-      .from('rental_credit_applications')
+      .from('custom_rental_credit_applications')
       .select('*')
       .eq('id', appId)
       .single()
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
     const generated = await generateAndStoreRentalAgreement(application, mraData)
 
     const { error: updateError } = await supabase
-      .from('rental_credit_applications')
+      .from('custom_rental_credit_applications')
       .update({
         generated_agreement_url: generated.url,
         generated_agreement_name: generated.name,

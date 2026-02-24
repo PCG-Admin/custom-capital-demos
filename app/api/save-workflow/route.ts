@@ -124,7 +124,7 @@ export async function POST(request: NextRequest) {
     }
 
     const { data, error } = await supabase
-      .from('rental_credit_applications')
+      .from('custom_rental_credit_applications')
       .insert({
         document_name: documentName,
         document_url: documentUrl,

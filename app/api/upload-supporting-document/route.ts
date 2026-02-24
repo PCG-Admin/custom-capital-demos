@@ -63,7 +63,7 @@ export async function POST(request: Request) {
 
             if (updateError) {
                 const { data: appData } = await supabase
-                    .from('rental_credit_applications')
+                    .from('custom_rental_credit_applications')
                     .select('step2_notes')
                     .eq('id', applicationId)
                     .single()
@@ -72,14 +72,14 @@ export async function POST(request: Request) {
                 const newNotes = `${currentNotes}\n[Uploaded Credit Report: ${file.name}]`.trim()
 
                 await supabase
-                    .from('rental_credit_applications')
+                    .from('custom_rental_credit_applications')
                     .update({ step2_notes: newNotes })
                     .eq('id', applicationId)
             }
         }
 
         const { error: insertError } = await supabase
-            .from('supporting_documents')
+            .from('custom_supporting_documents')
             .insert({
                 application_id: applicationId,
                 agreement_id: null,

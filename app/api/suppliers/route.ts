@@ -14,7 +14,7 @@ export async function GET() {
     const supabase = createServerClient()
 
     const { data, error } = await supabase
-      .from('suppliers')
+      .from('custom_suppliers')
       .select('*')
       .order('name', { ascending: true })
 
@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
 
     // Check for duplicate name
     const { data: existing } = await supabase
-      .from('suppliers')
+      .from('custom_suppliers')
       .select('id')
       .eq('name', name.trim())
       .single()
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
 
     // Insert new supplier
     const { data, error } = await supabase
-      .from('suppliers')
+      .from('custom_suppliers')
       .insert({
         name: name.trim(),
         description: description?.trim() || null,

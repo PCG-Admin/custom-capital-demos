@@ -117,7 +117,7 @@ export async function POST(request: NextRequest) {
 
     // Check if supplier exists
     const { data: supplier, error: supplierError } = await supabase
-      .from('suppliers')
+      .from('custom_suppliers')
       .select('id, name')
       .eq('id', supplierId)
       .single()
@@ -183,7 +183,7 @@ export async function POST(request: NextRequest) {
     }
 
     const { data: updatedSupplier, error: updateError } = await supabase
-      .from('suppliers')
+      .from('custom_suppliers')
       .update(updateData)
       .eq('id', supplierId)
       .select()

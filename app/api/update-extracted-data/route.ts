@@ -24,7 +24,7 @@ export async function POST(request: Request) {
     const supabase = createServerClient()
 
     const { data: record, error: fetchError } = await supabase
-      .from('rental_credit_applications')
+      .from('custom_rental_credit_applications')
       .select('id, current_step, status, step1_status')
       .eq('id', id)
       .single()
@@ -73,7 +73,7 @@ export async function POST(request: Request) {
     updatePayload.rental_term = rentalTerm
 
     const { error: updateError } = await supabase
-      .from('rental_credit_applications')
+      .from('custom_rental_credit_applications')
       .update(updatePayload)
       .eq('id', id)
 

@@ -63,7 +63,7 @@ export async function generateAndStoreInstallCOA(application: ApplicationRecord,
         }
 
         const { error: dbError } = await supabase
-            .from('supporting_documents')
+            .from('custom_supporting_documents')
             .insert({
                 application_id: application.id,
                 document_url: publicUrl,

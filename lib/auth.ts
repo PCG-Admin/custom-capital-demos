@@ -31,7 +31,7 @@ export async function getCurrentUser(): Promise<SessionUser | null> {
     // Fetch user from database to get latest data
     const supabase = createServerClient()
     const { data, error } = await supabase
-      .from('users')
+      .from('custom_users')
       .select('id, full_name, email, role, responsible_workflow, responsible_step')
       .eq('id', payload.userId)
       .single()

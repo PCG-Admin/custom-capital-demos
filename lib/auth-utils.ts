@@ -205,7 +205,7 @@ async function getRecentFailedAttempts(email: string): Promise<number> {
   const supabase = createServerClient()
 
   const { data, error } = await supabase
-    .from('login_attempts')
+    .from('custom_login_attempts')
     .select('id')
     .eq('email', email)
     .eq('success', false)
@@ -238,7 +238,7 @@ async function createSession(
   const expiresAt = new Date(Date.now() + SESSION_DURATION * 1000)
   const refreshExpiresAt = new Date(Date.now() + REFRESH_TOKEN_DURATION * 1000)
 
-  await supabase.from('user_sessions').insert({
+  await supabase.from('custom_user_sessions').insert({
     user_id: userId,
     session_token: sessionToken,
     refresh_token: refreshToken,
@@ -257,7 +257,7 @@ export async function invalidateSession(sessionToken: string): Promise<void> {
   const supabase = createServerClient()
 
   await supabase
-    .from('user_sessions')
+    .from('custom_user_sessions')
     .update({ is_active: false })
     .eq('session_token', sessionToken)
 }
@@ -269,7 +269,7 @@ export async function updateSessionActivity(sessionToken: string): Promise<void>
   const supabase = createServerClient()
 
   await supabase
-    .from('user_sessions')
+    .from('custom_user_sessions')
     .update({ last_activity_at: new Date().toISOString() })
     .eq('session_token', sessionToken)
     .eq('is_active', true)
@@ -336,7 +336,7 @@ export async function authenticateUser(
 
     // Step 2: Fetch user by email
     const { data: user, error: userError } = await supabase
-      .from('users')
+      .from('custom_users')
       .select('id, full_name, email, role, responsible_workflow, responsible_step, password_hash')
       .eq('email', email)
       .single()
@@ -398,7 +398,7 @@ export async function authenticateUser(
 
     // Step 7: Update last login time
     await supabase
-      .from('users')
+      .from('custom_users')
       .update({ last_login_at: new Date().toISOString() })
       .eq('id', user.id)
 

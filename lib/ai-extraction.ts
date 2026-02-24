@@ -633,9 +633,40 @@ function parseModelJson(text: string) {
     if (cleanText.endsWith(fence)) {
       cleanText = cleanText.slice(0, -3)
     }
-    return JSON.parse(cleanText.trim())
+    cleanText = cleanText.trim()
+
+    // Try to parse as-is first
+    try {
+      return JSON.parse(cleanText)
+    } catch (firstError) {
+      // If parsing fails, try to fix common issues
+      console.warn('[System] Initial JSON parse failed, attempting to fix...', firstError)
+
+      // Try to extract JSON from text if it's mixed with other content
+      const jsonMatch = cleanText.match(/\{[\s\S]*\}/)
+      if (jsonMatch) {
+        try {
+          return JSON.parse(jsonMatch[0])
+        } catch (extractError) {
+          console.warn('[System] Failed to extract valid JSON from matched content')
+        }
+      }
+
+      // Try to fix unterminated strings by closing them
+      if (cleanText.includes('"') && !cleanText.endsWith('}')) {
+        try {
+          const fixed = cleanText + '"}'
+          return JSON.parse(fixed)
+        } catch (fixError) {
+          console.warn('[System] Failed to fix unterminated string')
+        }
+      }
+
+      // If all fixes fail, throw the original error
+      throw firstError
+    }
   } catch (error: any) {
-    console.error('JSON Parse Error. Raw text:', text)
+    console.error('[System] JSON Parse Error. Raw text:', text.substring(0, 500) + '...')
     throw new Error(`Failed to parse AI response: ${error.message}. Response length: ${text.length}`)
   }
 }

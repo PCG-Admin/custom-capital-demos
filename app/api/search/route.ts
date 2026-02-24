@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
     const searchTerm = `%${query}%`
 
     const applicationQuery = supabase
-      .from('rental_credit_applications')
+      .from('custom_rental_credit_applications')
       .select('*')
       .or(
         `applicant_name.ilike.${searchTerm},applicant_email.ilike.${searchTerm},business_name.ilike.${searchTerm},document_name.ilike.${searchTerm}`
