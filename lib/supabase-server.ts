@@ -11,9 +11,21 @@ export const isSupabaseConfigured = Boolean(url && serverKey)
 
 let cachedClient: SupabaseClient | null = null
 
-export function createServerClient() {
+export function createServerClient(): SupabaseClient {
   if (!isSupabaseConfigured) {
-    throw new Error('Supabase environment variables are missing')
+    console.warn('Supabase environment variables are missing. Some features may not work.')
+    // Return a dummy client to prevent crashes during deployment
+    // This allows the app to load even without Supabase configured
+    return createClient(
+      'https://placeholder.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.placeholder',
+      {
+        auth: {
+          persistSession: false,
+          autoRefreshToken: false,
+        },
+      }
+    )
   }
 
   if (cachedClient) return cachedClient
