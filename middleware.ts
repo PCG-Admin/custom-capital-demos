@@ -1,6 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server'
-
-export const runtime = 'nodejs'
+import type { NextRequest } from 'next/dist/server/web/spec-extension/request'
+import { NextResponse } from 'next/dist/server/web/spec-extension/response'
 
 const PUBLIC_PATHS = [
   '/login',
