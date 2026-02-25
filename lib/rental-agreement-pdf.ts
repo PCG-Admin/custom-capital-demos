@@ -78,10 +78,10 @@ type AgreementContext = {
   dateAdjustment: 'Y' | 'N' | ''
 }
 
-const AGREEMENT_TEMPLATE_FILENAME = 'Rental-agreement.pdf'
-const AGREEMENT_TEMPLATE_PATH = path.join(process.cwd(), 'public', AGREEMENT_TEMPLATE_FILENAME)
-
-let cachedTemplateBytes: Uint8Array | null = null
+const AGREEMENT_TEMPLATE_FILENAMES = [
+  'CCF-Rental-Agreement-Non-CPA.pdf',
+  'Rental-agreement.pdf',
+]
 
 export async function generateAndStoreRentalAgreement(application: ApplicationRecord, customData?: any): Promise<GeneratedAgreementMeta> {
   const pdfBytes = await buildAgreementPdf(application, customData)
@@ -157,17 +157,21 @@ async function buildAgreementPdf(application: ApplicationRecord, customData?: an
 }
 
 async function loadAgreementTemplate() {
-  if (cachedTemplateBytes) {
-    return cachedTemplateBytes
+  for (const fileName of AGREEMENT_TEMPLATE_FILENAMES) {
+    const filePath = path.join(process.cwd(), 'public', fileName)
+    try {
+      return await fs.readFile(filePath)
+    } catch {
+      // Try next candidate
+    }
   }
 
-  try {
-    cachedTemplateBytes = await fs.readFile(AGREEMENT_TEMPLATE_PATH)
-    return cachedTemplateBytes
-  } catch (error) {
-    console.warn(`[agreement] Template PDF missing at ${AGREEMENT_TEMPLATE_PATH}`)
-    return null
-  }
+  console.warn(
+    `[agreement] Template PDF missing. Checked: ${AGREEMENT_TEMPLATE_FILENAMES
+      .map((f) => path.join(process.cwd(), 'public', f))
+      .join(', ')}`
+  )
+  return null
 }
 
 function deriveAgreementContext(application: ApplicationRecord, parsedExtracted: Record<string, any>, customData?: any): AgreementContext {

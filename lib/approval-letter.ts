@@ -6,8 +6,8 @@ import { createServerClient } from '@/lib/supabase-server'
 import { getSupportingBucketCandidates } from '@/lib/storage'
 import { setTextFieldAutoSized } from '@/lib/pdf-field-utils'
 
-const APPROVAL_TEMPLATE_FILENAME = 'approval unchecked.pdf'
-const APPROVAL_TEMPLATE_PATH = path.join(process.cwd(), 'Custom-generated templates', APPROVAL_TEMPLATE_FILENAME)
+const APPROVAL_TEMPLATE_FILENAME = 'Approval-letter.pdf'
+const APPROVAL_TEMPLATE_PATH = path.join(process.cwd(), 'public', APPROVAL_TEMPLATE_FILENAME)
 
 type ApplicationRecord = {
     id: string

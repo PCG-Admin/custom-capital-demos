@@ -107,8 +107,8 @@ export function MRADialog({ open, onOpenChange, applicationId, applicationData }
   const [accountType, setAccountType] = useState(applicationData?.accountType || 'Cheque')
   const [debitDay, setDebitDay] = useState('Last working day of each month')
 
-  // CCF Signatory (defaults as per user requirements)
-  const [ccfSignatoryName, setCcfSignatoryName] = useState('Bronwyn Barnard')
+  // CCF Signatory
+  const [ccfSignatoryName, setCcfSignatoryName] = useState('')
   const [ccfSignedOnBehalfOf, setCcfSignedOnBehalfOf] = useState(extractCityFromAddress(applicationData?.businessAddress))
   const [ccfSignDay, setCcfSignDay] = useState('')
   const [ccfSignMonth, setCcfSignMonth] = useState('')
@@ -345,10 +345,10 @@ export function MRADialog({ open, onOpenChange, applicationId, applicationData }
             </h3>
 
             <div className="space-y-4">
-              <h4 className="text-sm font-medium text-muted-foreground">CCF Signatory (Custom Capital Finance)</h4>
+              <h4 className="text-sm font-medium text-muted-foreground">PCG Signatory</h4>
               <div className="grid grid-cols-3 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="ccfSignatoryName">Name of Signatory (Default: Bronwyn Barnard)</Label>
+                  <Label htmlFor="ccfSignatoryName">Name of Signatory</Label>
                   <Input id="ccfSignatoryName" value={ccfSignatoryName} onChange={(e) => setCcfSignatoryName(e.target.value)} />
                 </div>
                 <div className="space-y-2">
@@ -580,7 +580,7 @@ export function MRADialog({ open, onOpenChange, applicationId, applicationData }
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="boardResolutionLocation">Held At (Same city as CCF signatory section)</Label>
+                <Label htmlFor="boardResolutionLocation">Held At (Same city as PCG signatory section)</Label>
                 <Input id="boardResolutionLocation" value={boardResolutionLocation} onChange={(e) => setBoardResolutionLocation(e.target.value)} placeholder="City" />
               </div>
             </div>

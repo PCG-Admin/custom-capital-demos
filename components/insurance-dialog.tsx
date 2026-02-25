@@ -295,13 +295,13 @@ export function InsuranceDialog({ open, onOpenChange, applicationId, application
             </div>
           </div>
 
-          {/* Section 4: CCF Signatory */}
+          {/* Section 4: PCG Signatory */}
           <div className="space-y-4">
             <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide border-b pb-2">
-              CCF Signatory (Custom Capital Finance)
+              PCG Signatory
             </h3>
             <div className="space-y-2">
-              <Label>Signed on behalf of CCF at (Location) *</Label>
+              <Label>Signed on behalf of PCG at (Location) *</Label>
               <Input value={signedOnBehalfOfCCFAt1} onChange={(e) => setSignedOnBehalfOfCCFAt1(e.target.value)} />
             </div>
             <div className="grid grid-cols-3 gap-4">
@@ -324,7 +324,7 @@ export function InsuranceDialog({ open, onOpenChange, applicationId, application
             </div>
             <div className="space-y-2">
               <Label>Address</Label>
-              <Textarea value={address} onChange={(e) => setAddress(e.target.value)} rows={2} placeholder="CCF address" />
+              <Textarea value={address} onChange={(e) => setAddress(e.target.value)} rows={2} placeholder="PCG address" />
             </div>
           </div>
 

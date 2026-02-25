@@ -295,10 +295,10 @@ export function AddendumDialog({ open, onOpenChange, applicationId, applicationD
             </div>
           </div>
 
-          {/* Section 4: CCF Signatory / Witness */}
+          {/* Section 4: PCG Signatory / Witness */}
           <div className="space-y-4">
             <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide border-b pb-2">
-              CCF Signatory (Custom Capital Finance)
+              PCG Signatory
             </h3>
             <div className="grid grid-cols-3 gap-4">
               <div className="space-y-2">
