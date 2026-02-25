@@ -285,7 +285,7 @@ export function WorkflowsView({ activeApplications, approvedApplications, declin
 
       {/* KPIs Section */}
       <div className="grid gap-6 mb-10 md:grid-cols-3">
-        <Card className="bg-gradient-to-br from-white to-slate-50 border-slate-200/60 shadow-sm">
+        <Card className="relative overflow-hidden bg-white border-slate-200/60 shadow-sm before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-blue-500">
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium text-slate-600">
               Active Applications
@@ -295,7 +295,7 @@ export function WorkflowsView({ activeApplications, approvedApplications, declin
             <div className="text-3xl font-bold text-slate-900">{activeApplications.length}</div>
           </CardContent>
         </Card>
-        <Card className="bg-gradient-to-br from-white to-slate-50 border-slate-200/60 shadow-sm">
+        <Card className="relative overflow-hidden bg-white border-slate-200/60 shadow-sm before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-emerald-500">
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium text-slate-600">
               Approved Applications
@@ -305,7 +305,7 @@ export function WorkflowsView({ activeApplications, approvedApplications, declin
             <div className="text-3xl font-bold text-slate-900">{approvedItems.length}</div>
           </CardContent>
         </Card>
-        <Card className="bg-gradient-to-br from-white to-slate-50 border-slate-200/60 shadow-sm">
+        <Card className="relative overflow-hidden bg-white border-slate-200/60 shadow-sm before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-amber-500">
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium text-slate-600">
               Total Active
@@ -447,7 +447,7 @@ export function WorkflowsView({ activeApplications, approvedApplications, declin
           </div>
 
           {myTasks.length === 0 ? (
-            <Card className="border-dashed">
+            <Card className="border-dashed bg-white">
               <CardContent className="py-10 text-center space-y-2">
                 <p className="text-lg font-medium">No Tasks Pending</p>
                 <p className="text-sm text-muted-foreground">
@@ -459,7 +459,7 @@ export function WorkflowsView({ activeApplications, approvedApplications, declin
             <div className="flex flex-col gap-3">
               {paginatedMyTasks.map((task) => {
                 return (
-                  <Card key={`${task.type}-${task.id}`} className="hover:shadow-md transition-shadow">
+                  <Card key={`${task.type}-${task.id}`} className="bg-white hover:shadow-md transition-shadow">
                     <div className="flex items-center justify-between p-6">
                       <div className="flex-1 min-w-0 pr-6">
                           <div className="flex items-center gap-2 mb-1">
@@ -518,7 +518,7 @@ export function WorkflowsView({ activeApplications, approvedApplications, declin
           </div>
 
           {activeApplications.length === 0 ? (
-            <Card className="border-dashed">
+            <Card className="border-dashed bg-white">
               <CardContent className="flex flex-col items-center justify-center py-12">
                 <FileText className="h-12 w-12 text-muted-foreground mb-4" />
                 <p className="text-lg font-medium mb-1">No active application workflows</p>
@@ -532,7 +532,7 @@ export function WorkflowsView({ activeApplications, approvedApplications, declin
               {paginatedApplications.map((app) => {
                 const progress = calculateProgress(app, 6)
                 return (
-                  <Card key={app.id} className="hover:shadow-md transition-shadow">
+                  <Card key={app.id} className="bg-white hover:shadow-md transition-shadow">
                     <div className="flex items-center justify-between p-6">
                         <div className="flex-1 min-w-0 pr-6">
                              <div className="flex items-center gap-2 mb-1">
@@ -616,7 +616,7 @@ export function WorkflowsView({ activeApplications, approvedApplications, declin
           </div>
 
           {approvedItems.length === 0 ? (
-            <Card className="border-dashed">
+            <Card className="border-dashed bg-white">
               <CardContent className="flex flex-col items-center justify-center py-12">
                 <CheckCircle2 className="h-12 w-12 text-muted-foreground mb-4" />
                 <p className="text-lg font-medium mb-1">No approved workflows found</p>
@@ -634,7 +634,7 @@ export function WorkflowsView({ activeApplications, approvedApplications, declin
                 const hasAgreement = Boolean(item.generated_agreement_url)
                 
                 return (
-                  <Card key={item.id} className="hover:shadow-md transition-shadow border-l-4 border-l-emerald-500/70">
+                  <Card key={item.id} className="bg-white hover:shadow-md transition-shadow border-l-4 border-l-emerald-500/70">
                     <div className="flex items-center justify-between p-6">
                         <div className="flex-1 min-w-0 pr-6">
                             <div className="flex items-center gap-2 mb-1">
@@ -718,7 +718,7 @@ export function WorkflowsView({ activeApplications, approvedApplications, declin
           </div>
 
           {rejectedItems.length === 0 ? (
-            <Card className="border-dashed">
+            <Card className="border-dashed bg-white">
               <CardContent className="flex flex-col items-center justify-center py-12">
                 <XCircle className="h-12 w-12 text-muted-foreground mb-4" />
                 <p className="text-lg font-medium mb-1">No rejected workflows found</p>
@@ -735,7 +735,7 @@ export function WorkflowsView({ activeApplications, approvedApplications, declin
                 const subtitle = isApp ? `Application #${item.id.slice(0, 8)}` : `Agreement #${item.id.slice(0, 8)}`
                 
                 return (
-                  <Card key={item.id} className="hover:shadow-md transition-shadow border-l-4 border-l-rose-500/70">
+                  <Card key={item.id} className="bg-white hover:shadow-md transition-shadow border-l-4 border-l-rose-500/70">
                     <div className="flex items-center justify-between p-6">
                         <div className="flex-1 min-w-0 pr-6">
                             <div className="flex items-center gap-2 mb-1">
@@ -809,3 +809,4 @@ export function WorkflowsView({ activeApplications, approvedApplications, declin
     </div>
   )
 }
+

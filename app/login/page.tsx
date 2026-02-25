@@ -12,8 +12,12 @@ export default async function LoginPage() {
   }
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-slate-100 px-4 py-12">
+    <div className="min-h-screen flex items-start justify-center bg-[#deeffa] px-4 pt-32 pb-10">
       <LoginCard />
     </div>
   )
 }
+
+
+
+

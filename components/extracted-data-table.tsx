@@ -25,6 +25,9 @@ interface ExtractedDataTableProps {
   workflowStatus?: string
   onDataChange?: (data: Record<string, any>) => void
   supplierFieldHints?: { enabled_fields: string[]; dynamic_fields?: Record<string, string> } | null
+  isEditing?: boolean
+  onIsEditingChange?: (isEditing: boolean) => void
+  showHeaderEditButton?: boolean
 }
 
 const agreementLabels: Record<string, string> = {
@@ -278,10 +281,21 @@ const applicationSections: Section[] = [
   },
 ]
 
-export function ExtractedDataTable({ data, type, recordId, canEdit = true, workflowStatus, onDataChange, supplierFieldHints }: ExtractedDataTableProps) {
+export function ExtractedDataTable({
+  data,
+  type,
+  recordId,
+  canEdit = true,
+  workflowStatus,
+  onDataChange,
+  supplierFieldHints,
+  isEditing: controlledIsEditing,
+  onIsEditingChange,
+  showHeaderEditButton = true,
+}: ExtractedDataTableProps) {
   const { toast } = useToast()
   const router = useRouter()
-  const [isEditing, setIsEditing] = useState(false)
+  const [internalIsEditing, setInternalIsEditing] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [draftData, setDraftData] = useState<Record<string, any>>(data || {})
   const [suppliers, setSuppliers] = useState<Array<{ id: string; name: string }>>([])
@@ -373,6 +387,14 @@ export function ExtractedDataTable({ data, type, recordId, canEdit = true, workf
   const equipmentItems = Array.isArray(draftData.equipment_items) ? draftData.equipment_items : []
   const isLocked = ['approved', 'declined'].includes((workflowStatus || '').toLowerCase())
   const editingDisabled = isLocked || !canEdit
+  const isEditing = controlledIsEditing ?? internalIsEditing
+
+  const setIsEditing = (value: boolean) => {
+    if (controlledIsEditing === undefined) {
+      setInternalIsEditing(value)
+    }
+    onIsEditingChange?.(value)
+  }
 
   const handleFieldChange = (field: string, value: string) => {
     setDraftData((prev) => ({ ...prev, [field]: value }))
@@ -500,7 +522,7 @@ export function ExtractedDataTable({ data, type, recordId, canEdit = true, workf
   }
 
   return (
-    <Card>
+    <Card className="bg-white">
       <CardHeader className="flex flex-row items-start justify-between">
         <div>
           <CardTitle>AI Extracted Data</CardTitle>
@@ -519,11 +541,17 @@ export function ExtractedDataTable({ data, type, recordId, canEdit = true, workf
                   Cancel
                 </Button>
               </>
-            ) : (
-              <Button size="sm" variant="outline" onClick={() => setIsEditing(true)} disabled={editingDisabled}>
+            ) : showHeaderEditButton ? (
+              <Button
+                size="sm"
+                variant="outline"
+                className="bg-white hover:bg-slate-50"
+                onClick={() => setIsEditing(true)}
+                disabled={editingDisabled}
+              >
                 Edit
               </Button>
-            )}
+            ) : null}
           </div>
         )}
       </CardHeader>

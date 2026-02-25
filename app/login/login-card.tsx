@@ -46,49 +46,50 @@ export function LoginCard() {
   }
 
   return (
-    <Card className="w-full max-w-md shadow-xl border-border/80">
-      <CardHeader className="text-center space-y-3">
+    <Card className="w-full max-w-md overflow-hidden border border-[#7ea4bf] bg-[#011524] shadow-xl py-0">
+      <CardHeader className="space-y-1 pb-2 pt-6 text-center">
         <div className="flex justify-center">
           <Image
             src={logoSrc}
-            alt="Custom Capital"
-            width={200}
-            height={56}
-            className="h-14 w-auto"
+            alt="Mindrift"
+            width={400}
+            height={130}
+            className="h-28 w-auto"
             priority
           />
         </div>
         <div>
-          <CardTitle className="text-2xl font-semibold text-foreground">Welcome Back</CardTitle>
-          <CardDescription className="text-base">
+          <CardTitle className="text-2xl font-semibold text-white">Welcome Back</CardTitle>
+          <CardDescription className="text-base text-[#b6d0e3]">
             Sign in to manage rental credit applications and agreements.
           </CardDescription>
         </div>
       </CardHeader>
 
       <form onSubmit={handleSubmit}>
-        <CardContent className="space-y-5">
+        <CardContent className="space-y-5 bg-[#011524] pb-5">
           <div className="space-y-2">
-            <label htmlFor="email" className="text-sm font-medium text-foreground">
+            <label htmlFor="email" className="text-sm font-medium text-white">
               Email address
             </label>
             <Input
               id="email"
               type="email"
-              placeholder="you@customcapital.com"
+              placeholder="you@mindrift.com"
               autoComplete="email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
+              className="border-white/25 bg-white/5 text-white placeholder:text-[#9ab8cc]"
               required
             />
           </div>
 
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <label htmlFor="password" className="text-sm font-medium text-foreground">
+              <label htmlFor="password" className="text-sm font-medium text-white">
                 Password
               </label>
-              <Link href="/reset-password" className="text-xs font-medium text-primary hover:underline">
+              <Link href="/reset-password" className="text-xs font-medium text-[#9fd3ff] hover:text-white hover:underline">
                 Forgot password?
               </Link>
             </div>
@@ -99,29 +100,40 @@ export function LoginCard() {
               autoComplete="current-password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
+              className="border-white/25 bg-white/5 text-white placeholder:text-[#9ab8cc]"
               required
             />
           </div>
 
           {error && <p className="text-sm text-red-600">{error}</p>}
 
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
+          <Button
+            type="submit"
+            className="w-full border-[#d7e8f5] bg-[#deeffa] text-[#011524] hover:bg-[#c7def0]"
+            disabled={isSubmitting}
+          >
             {isSubmitting ? 'Signing in...' : 'Sign in'}
           </Button>
 
-          <div className="text-center text-xs text-muted-foreground">
+          <div className="text-center text-xs text-[#b6d0e3]">
             Need an account?{' '}
-            <Link href="/contact" className="text-primary hover:underline">
+            <Link href="/contact" className="text-[#9fd3ff] hover:text-white hover:underline">
               Contact platform admin
             </Link>
           </div>
         </CardContent>
 
-        <CardFooter className="flex flex-col gap-1 text-center text-xs text-muted-foreground">
-          <p>Use the credentials provisioned for your workflow role.</p>
-          <p className="text-[11px]">Having trouble? Reach out to support@customcapital.com</p>
+        <CardFooter className="flex flex-col gap-1 border-t border-white/10 bg-[#011524] px-6 pb-6 pt-4 text-center text-xs leading-5 text-[#b6d0e3]">
+          <p className="text-[#b6d0e3]">Use the credentials provisioned for your workflow role.</p>
+          <p className="text-xs text-[#9fd3ff]">Having trouble? Reach out to support@mindrift.com</p>
         </CardFooter>
       </form>
     </Card>
   )
 }
+
+
+
+
+
+

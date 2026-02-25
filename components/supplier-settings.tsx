@@ -212,7 +212,7 @@ export function SupplierSettings({ initialSuppliers }: SupplierSettingsProps) {
   return (
     <div className="grid gap-6">
       {/* Add Supplier Form */}
-      <Card>
+      <Card className="bg-white">
         <CardHeader>
           <CardTitle>Add New Supplier</CardTitle>
           <CardDescription>
@@ -270,7 +270,7 @@ export function SupplierSettings({ initialSuppliers }: SupplierSettingsProps) {
       </Card>
 
       {/* Suppliers List */}
-      <Card>
+      <Card className="bg-white">
         <CardHeader>
           <CardTitle>All Suppliers</CardTitle>
           <CardDescription>
@@ -288,7 +288,7 @@ export function SupplierSettings({ initialSuppliers }: SupplierSettingsProps) {
               {suppliers.map((supplier) => (
                 <div
                   key={supplier.id}
-                  className="flex items-center justify-between p-4 border rounded-lg bg-card"
+                  className="flex items-center justify-between p-4 border rounded-lg bg-white"
                 >
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">

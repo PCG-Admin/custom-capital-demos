@@ -69,7 +69,7 @@ export default async function ApplicationWorkflowPage({
     <div className="container mx-auto px-4 py-8 max-w-7xl">
       <div className="mb-6">
         <Link href="/rental-credit-application">
-          <Button variant="ghost" size="sm">
+          <Button variant="outline" size="sm" className="bg-white hover:bg-slate-50">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Applications
           </Button>

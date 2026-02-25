@@ -484,7 +484,7 @@ export function WorkflowTracker({ steps, applicationId, type, currentStep, curre
 
   return (
     <>
-      <Card>
+      <Card className="bg-white">
         <CardHeader>
           <CardTitle>Workflow Progress</CardTitle>
         </CardHeader>

@@ -48,7 +48,7 @@ export function SearchInterface() {
 
   return (
     <div className="space-y-6">
-      <Card>
+      <Card className="bg-white">
         <CardContent className="pt-6">
           <form onSubmit={handleSearch} className="space-y-4">
             <div className="relative w-full">
@@ -103,7 +103,7 @@ export function SearchInterface() {
 
           <div className="space-y-4">
             {results.map((result) => (
-              <Card key={`${result.type}-${result.id}`} className="hover:shadow-md transition-shadow">
+              <Card key={`${result.type}-${result.id}`} className="bg-white hover:shadow-md transition-shadow">
                 <CardContent className="pt-6">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-start gap-3 flex-1">

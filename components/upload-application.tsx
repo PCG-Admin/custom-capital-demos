@@ -24,6 +24,7 @@ export function UploadApplication() {
   const [suppliers, setSuppliers] = useState<Array<any>>([])
   const [selectedSupplier, setSelectedSupplier] = useState<string | undefined>(undefined)
   const [supplierFieldHints, setSupplierFieldHints] = useState<any>(null)
+  const [isEditingExtractedData, setIsEditingExtractedData] = useState(false)
   const { toast } = useToast()
 
   // Fetch suppliers on component mount
@@ -84,6 +85,7 @@ export function UploadApplication() {
     setExtractedData(null)
     setCreatedRecordId(null)
     setOriginalFile(null)
+    setIsEditingExtractedData(false)
 
     try {
       // 1. Upload to Supabase Storage
@@ -222,6 +224,7 @@ export function UploadApplication() {
 
       const result = await response.json()
       setCreatedRecordId(result.record?.id || null)
+      setIsEditingExtractedData(false)
 
       toast({
         title: 'Application saved successfully',
@@ -241,7 +244,7 @@ export function UploadApplication() {
 
   return (
     <div className="space-y-6">
-      <Card>
+      <Card className="bg-white">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Upload className="h-5 w-5 text-primary" />
@@ -329,23 +332,38 @@ export function UploadApplication() {
             type="application"
             onDataChange={setExtractedData}
             supplierFieldHints={supplierFieldHints}
+            isEditing={isEditingExtractedData}
+            onIsEditingChange={setIsEditingExtractedData}
+            showHeaderEditButton={false}
           />
-          <div className="flex justify-between">
+          <div className="flex justify-between items-center gap-3">
             <Button
               onClick={() => {
                 setExtractedData(null)
                 setDerivedFields(null)
                 setDocumentMeta(null)
                 setOriginalFile(null)
+                setIsEditingExtractedData(false)
               }}
               variant="outline"
+              className="bg-white hover:bg-slate-50"
             >
               Upload Another
             </Button>
-            <Button onClick={handleSave} disabled={isSaving} className="bg-[#84754e] hover:bg-[#6d6141]">
-              {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Confirm & Create Workflow
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                className="bg-white hover:bg-slate-50"
+                onClick={() => setIsEditingExtractedData(true)}
+                disabled={isSaving}
+              >
+                Edit
+              </Button>
+              <Button onClick={handleSave} disabled={isSaving} className="bg-[#d4af37] text-[#2b2207] hover:bg-[#c29b24]">
+                {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Confirm & Create Workflow
+              </Button>
+            </div>
           </div>
         </div>
       )}
@@ -373,7 +391,7 @@ export function UploadApplication() {
                 setCreatedRecordId(null)
               }}
               variant="outline"
-              className="flex-1 sm:flex-none"
+              className="flex-1 sm:flex-none bg-white hover:bg-slate-50"
             >
               Upload Another
             </Button>
@@ -383,3 +401,4 @@ export function UploadApplication() {
     </div>
   )
 }
+

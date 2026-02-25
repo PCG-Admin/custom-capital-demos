@@ -11,7 +11,7 @@ export function UploadAndExtractContent() {
 
       </div>
 
-      <div className="rounded-2xl border bg-card/60 shadow-sm p-4 sm:p-6">
+      <div className="rounded-2xl border bg-white shadow-sm p-4 sm:p-6">
         <div className="flex flex-col gap-2">
           <p className="text-sm font-semibold text-[#463d28]">Document type</p>
           <p className="text-2xl font-bold text-[#1a1a1a]">Rental Credit Application</p>
@@ -28,3 +28,4 @@ export function UploadAndExtractContent() {
     </div>
   )
 }
+

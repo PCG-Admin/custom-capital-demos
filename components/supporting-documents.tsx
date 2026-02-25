@@ -182,7 +182,7 @@ export function SupportingDocuments({
 
   return (
     <>
-      <Card>
+      <Card className="bg-white">
         <CardHeader>
           <CardTitle>Documents</CardTitle>
         </CardHeader>

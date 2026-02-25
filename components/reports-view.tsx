@@ -28,6 +28,11 @@ interface ReportsViewProps {
 export function ReportsView({ applications }: ReportsViewProps) {
   const formatRand = (value: number) =>
     `R${value.toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+  const formatRandCompact = (value: number) => {
+    if (value >= 1_000_000) return `R${(value / 1_000_000).toFixed(1)}m`
+    if (value >= 1_000) return `R${(value / 1_000).toFixed(0)}k`
+    return `R${Math.round(value)}`
+  }
   const normalizeStatus = (value?: string) => (value || '').toLowerCase()
   const formatStableDate = (value?: string | null) => {
     if (!value) return ''
@@ -60,6 +65,38 @@ export function ReportsView({ applications }: ReportsViewProps) {
   const liveAgreements = generatedAgreements.length
 
   const pipelineValue = totalAgreementValue + totalApplicationValue
+  const approvedValue = applications
+    .filter((app) => normalizeStatus(app.status) === 'approved')
+    .reduce((sum, app) => sum + (Number(app.rental_amount) || 0), 0)
+  const declinedValue = applications
+    .filter((app) => normalizeStatus(app.status) === 'declined')
+    .reduce((sum, app) => sum + (Number(app.rental_amount) || 0), 0)
+  const inWorkflowValue = applications
+    .filter((app) => {
+      const status = normalizeStatus(app.status)
+      return status === 'pending' || status === 'deferred' || status === 'info_requested' || status === 'in_progress'
+    })
+    .reduce((sum, app) => sum + (Number(app.rental_amount) || 0), 0)
+
+  const workflowFunnelData = [
+    { stage: 'Uploaded', count: totalApplications, value: totalApplicationValue, color: '#3b82f6' },
+    { stage: 'In Progress', count: inWorkflowApplications, value: inWorkflowValue, color: '#f59e0b' },
+    { stage: 'Approved', count: approvedApplications, value: approvedValue, color: '#10b981' },
+    { stage: 'Declined', count: declinedApplications, value: declinedValue, color: '#ef4444' },
+  ]
+
+  const activeStatuses = new Set(['pending', 'deferred', 'info_requested', 'in_progress'])
+  const stepBottleneckData = Array.from({ length: 5 }, (_, idx) => {
+    const step = idx + 1
+    const stepApps = applications.filter(
+      (app) => Number(app.current_step || 1) === step && activeStatuses.has(normalizeStatus(app.status))
+    )
+    return {
+      step: `Step ${step}`,
+      applications: stepApps.length,
+      value: stepApps.reduce((sum, app) => sum + (Number(app.rental_amount) || 0), 0),
+    }
+  })
   
   const COLORS = ['#10b981', '#ef4444', '#f59e0b', '#3b82f6']
   
@@ -111,6 +148,55 @@ export function ReportsView({ applications }: ReportsViewProps) {
     return last6Months.map(({ year, month, ...rest }) => rest)
   })()
 
+  const monthlyOutcomeTrend = (() => {
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    const now = new Date()
+    const last6Months: { name: string; approved: number; declined: number; year: number; month: number }[] = []
+
+    for (let i = 5; i >= 0; i--) {
+      const date = new Date(now.getFullYear(), now.getMonth() - i, 1)
+      last6Months.push({
+        name: monthNames[date.getMonth()],
+        approved: 0,
+        declined: 0,
+        year: date.getFullYear(),
+        month: date.getMonth(),
+      })
+    }
+
+    applications.forEach((app) => {
+      const sourceDate = app.updated_at || app.created_at
+      if (!sourceDate) return
+      const appDate = new Date(sourceDate)
+      const bucket = last6Months.find((m) => m.year === appDate.getFullYear() && m.month === appDate.getMonth())
+      if (!bucket) return
+
+      const status = normalizeStatus(app.status)
+      if (status === 'approved') bucket.approved += 1
+      if (status === 'declined') bucket.declined += 1
+    })
+
+    return last6Months.map(({ year, month, ...rest }) => rest)
+  })()
+
+  const avgDealSizeByOutcome = [
+    {
+      outcome: 'Approved',
+      avg: approvedApplications > 0 ? approvedValue / approvedApplications : 0,
+      color: '#10b981',
+    },
+    {
+      outcome: 'Declined',
+      avg: declinedApplications > 0 ? declinedValue / declinedApplications : 0,
+      color: '#ef4444',
+    },
+    {
+      outcome: 'Pending',
+      avg: pendingApplications > 0 ? inWorkflowValue / pendingApplications : 0,
+      color: '#f59e0b',
+    },
+  ]
+
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
@@ -136,11 +222,11 @@ export function ReportsView({ applications }: ReportsViewProps) {
 
       {/* Top Level Stats */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
-        <Card className="border-l-4 border-l-primary shadow-sm hover:shadow-md transition-shadow">
+        <Card className="relative overflow-hidden bg-white shadow-sm hover:shadow-md transition-shadow before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-red-500">
           <CardContent className="p-6">
             <div className="flex items-center justify-between space-y-0 pb-2">
               <p className="text-sm font-medium text-muted-foreground">Total Pipeline Value</p>
-              <RandIcon className="h-4 w-4 text-primary" />
+              <RandIcon className="h-4 w-4 text-red-500" />
             </div>
             <div className="text-2xl font-bold">{formatRand(pipelineValue)}</div>
             <p className="text-xs text-muted-foreground mt-1">
@@ -148,7 +234,7 @@ export function ReportsView({ applications }: ReportsViewProps) {
             </p>
           </CardContent>
         </Card>
-        <Card className="border-l-4 border-l-green-500 shadow-sm hover:shadow-md transition-shadow">
+        <Card className="relative overflow-hidden bg-white shadow-sm hover:shadow-md transition-shadow before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-green-500">
           <CardContent className="p-6">
             <div className="flex items-center justify-between space-y-0 pb-2">
               <p className="text-sm font-medium text-muted-foreground">Approval Rate</p>
@@ -162,7 +248,7 @@ export function ReportsView({ applications }: ReportsViewProps) {
             </p>
           </CardContent>
         </Card>
-        <Card className="border-l-4 border-l-blue-500 shadow-sm hover:shadow-md transition-shadow">
+        <Card className="relative overflow-hidden bg-white shadow-sm hover:shadow-md transition-shadow before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-blue-500">
           <CardContent className="p-6">
             <div className="flex items-center justify-between space-y-0 pb-2">
               <p className="text-sm font-medium text-muted-foreground">Avg. Application Size</p>
@@ -174,7 +260,7 @@ export function ReportsView({ applications }: ReportsViewProps) {
             </p>
           </CardContent>
         </Card>
-        <Card className="border-l-4 border-l-purple-500 shadow-sm hover:shadow-md transition-shadow">
+        <Card className="relative overflow-hidden bg-white shadow-sm hover:shadow-md transition-shadow before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-purple-500">
           <CardContent className="p-6">
             <div className="flex items-center justify-between space-y-0 pb-2">
               <p className="text-sm font-medium text-muted-foreground">Generated Agreements</p>
@@ -190,7 +276,7 @@ export function ReportsView({ applications }: ReportsViewProps) {
 
       {/* Charts Row 1 */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7 mb-8">
-        <Card className="lg:col-span-4 shadow-sm">
+        <Card className="lg:col-span-4 shadow-sm bg-white">
           <CardHeader>
             <CardTitle>Revenue Trend</CardTitle>
             <CardDescription>Projected revenue based on generated agreements over time</CardDescription>
@@ -225,7 +311,7 @@ export function ReportsView({ applications }: ReportsViewProps) {
           </CardContent>
         </Card>
 
-        <Card className="lg:col-span-3 shadow-sm">
+        <Card className="lg:col-span-3 shadow-sm bg-white">
           <CardHeader>
             <CardTitle>Application Status</CardTitle>
             <CardDescription>Distribution of application outcomes</CardDescription>
@@ -264,9 +350,122 @@ export function ReportsView({ applications }: ReportsViewProps) {
 
       </div>
 
+      {/* Charts Row 2 */}
+      <div className="grid gap-6 md:grid-cols-2 mb-8">
+        <Card className="shadow-sm bg-white">
+          <CardHeader>
+            <CardTitle>Workflow Funnel</CardTitle>
+            <CardDescription>Applications by stage with corresponding value context</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="h-[260px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={workflowFunnelData} layout="vertical" margin={{ top: 0, right: 20, left: 30, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" horizontal vertical={false} stroke="#e5e7eb" />
+                  <XAxis type="number" hide />
+                  <YAxis dataKey="stage" type="category" width={90} tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
+                  <Tooltip
+                    formatter={(value: number, name: string, props: any) => {
+                      if (name === 'count') return [value, 'Applications']
+                      return [value, name]
+                    }}
+                    labelFormatter={(label, payload) => {
+                      const row = payload?.[0]?.payload
+                      return row ? `${label} · ${formatRand(row.value || 0)}` : String(label)
+                    }}
+                  />
+                  <Bar dataKey="count" radius={[0, 4, 4, 0]} barSize={20}>
+                    {workflowFunnelData.map((entry) => (
+                      <Cell key={entry.stage} fill={entry.color} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="shadow-sm bg-white">
+          <CardHeader>
+            <CardTitle>Step Bottlenecks</CardTitle>
+            <CardDescription>Where active applications are currently waiting</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="h-[260px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={stepBottleneckData} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
+                  <XAxis dataKey="step" tickLine={false} axisLine={false} />
+                  <YAxis allowDecimals={false} tickLine={false} axisLine={false} />
+                  <Tooltip
+                    formatter={(value: number, name: string, props: any) => {
+                      if (name === 'applications') return [value, 'Applications']
+                      return [value, name]
+                    }}
+                    labelFormatter={(label, payload) => {
+                      const row = payload?.[0]?.payload
+                      return row ? `${label} · ${formatRand(row.value || 0)}` : String(label)
+                    }}
+                  />
+                  <Bar dataKey="applications" radius={[4, 4, 0, 0]} fill="#2563eb" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Charts Row 3 */}
+      <div className="grid gap-6 md:grid-cols-2 mb-8">
+        <Card className="shadow-sm bg-white">
+          <CardHeader>
+            <CardTitle>Outcome Trend</CardTitle>
+            <CardDescription>Approved vs declined applications over the last 6 months</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="h-[260px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={monthlyOutcomeTrend} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
+                  <XAxis dataKey="name" tickLine={false} axisLine={false} />
+                  <YAxis allowDecimals={false} tickLine={false} axisLine={false} />
+                  <Tooltip />
+                  <Bar dataKey="approved" stackId="outcomes" fill="#10b981" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="declined" stackId="outcomes" fill="#ef4444" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="shadow-sm bg-white">
+          <CardHeader>
+            <CardTitle>Average Deal Size by Outcome</CardTitle>
+            <CardDescription>Mean rental amount segmented by application outcome</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="h-[260px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={avgDealSizeByOutcome} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
+                  <XAxis dataKey="outcome" tickLine={false} axisLine={false} />
+                  <YAxis tickLine={false} axisLine={false} tickFormatter={(v) => formatRandCompact(Number(v))} />
+                  <Tooltip formatter={(value: number) => [formatRand(value), 'Avg Deal Size']} />
+                  <Bar dataKey="avg" radius={[4, 4, 0, 0]}>
+                    {avgDealSizeByOutcome.map((entry) => (
+                      <Cell key={entry.outcome} fill={entry.color} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
       {/* Recent Activity & Top Deals */}
       <div className="grid gap-6 md:grid-cols-2 mb-8">
-        <Card className="shadow-sm">
+        <Card className="shadow-sm bg-white">
           <CardHeader>
             <CardTitle>Recent Applications</CardTitle>
             <CardDescription>Latest submissions needing attention</CardDescription>
@@ -295,7 +494,7 @@ export function ReportsView({ applications }: ReportsViewProps) {
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm">
+        <Card className="shadow-sm bg-white">
           <CardHeader>
             <CardTitle>Agreement Generation Status</CardTitle>
             <CardDescription>Breakdown of generated agreements vs. approvals still pending export</CardDescription>

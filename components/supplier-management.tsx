@@ -230,7 +230,7 @@ export function SupplierManagement({ initialSuppliers }: SupplierManagementProps
         </Button>
       </div>
 
-      <Card>
+      <Card className="bg-white">
         <CardHeader>
           <CardTitle>All Suppliers</CardTitle>
           <CardDescription>
@@ -248,7 +248,7 @@ export function SupplierManagement({ initialSuppliers }: SupplierManagementProps
               {suppliers.map((supplier) => (
                 <div
                   key={supplier.id}
-                  className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/30 transition-colors"
+                  className="flex items-center justify-between p-4 border rounded-lg bg-white hover:bg-slate-50 transition-colors"
                 >
                   <div className="flex-1 min-w-0 mr-4">
                     <div className="flex items-center gap-2 mb-1">
