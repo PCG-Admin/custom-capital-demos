@@ -1,5 +1,6 @@
-import type { NextRequest } from 'next/dist/server/web/spec-extension/request'
-import { NextResponse } from 'next/dist/server/web/spec-extension/response'
+// No Next.js imports — the next/server barrel eagerly loads ua-parser-js
+// which uses __dirname, crashing Vercel's Edge Runtime.
+// All Web APIs (Request, Response, URL) are native globals in Edge Runtime.
 
 const PUBLIC_PATHS = [
   '/login',
@@ -12,9 +13,9 @@ const PUBLIC_PATHS = [
   '/reset-password',
 ]
 
-export function middleware(request: NextRequest) {
+export function middleware(request: Request) {
   try {
-    const { pathname } = request.nextUrl
+    const { pathname } = new URL(request.url)
 
     // Allow public static assets
     const isPublicAsset =
@@ -22,35 +23,30 @@ export function middleware(request: NextRequest) {
       pathname.startsWith('/api/auth') ||
       pathname.startsWith('/images/') ||
       pathname.startsWith('/public/') ||
-      pathname.match(/\.(png|jpg|jpeg|gif|svg|ico|pdf|webp)$/)
+      /\.(png|jpg|jpeg|gif|svg|ico|pdf|webp)$/.test(pathname)
 
-    if (isPublicAsset) {
-      return NextResponse.next()
-    }
+    if (isPublicAsset) return
 
     // Check if path is in public paths list
     const isPublic = PUBLIC_PATHS.some(
       (path) => pathname === path || pathname.startsWith(`${path}/`)
     )
 
-    if (isPublic) {
-      return NextResponse.next()
-    }
+    if (isPublic) return
 
     // Check for session cookie
-    const session = request.cookies.get('cc_session')
+    const cookieHeader = request.headers.get('cookie') ?? ''
+    const hasSession = cookieHeader.split(';').some(
+      (c) => c.trim().startsWith('cc_session=')
+    )
 
-    if (!session) {
+    if (!hasSession) {
       const loginUrl = new URL('/login', request.url)
       loginUrl.searchParams.set('from', pathname)
-      return NextResponse.redirect(loginUrl)
+      return Response.redirect(loginUrl, 307)
     }
-
-    return NextResponse.next()
   } catch (error) {
-    // Log error and allow request to continue to avoid blocking the entire app
     console.error('Middleware error:', error)
-    return NextResponse.next()
   }
 }
 
