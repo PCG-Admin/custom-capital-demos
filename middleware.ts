@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+export const runtime = 'nodejs'
+
 const PUBLIC_PATHS = [
   '/login',
   '/api/login',
